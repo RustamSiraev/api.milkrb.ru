@@ -1,0 +1,1719 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "API ИС Молочная кухня",
+    "version": "1.1.0",
+    "description": "# Общее описание\n<style> .version {\n  border: 0.1rem #b3b3b3 solid;\n  background-color: #F9F9F9;\n  color: #32329FE6;\n  height: 25px;\n  width: 150px;\n  text-align: center\n}, </style> <style> .warning {\n  border: 1.6rem #b3b3b3 solid;\n  background-color: #F9F9F9;\n  color: #247706;\n  text-align: center\n} </style> <style> .langChange {\n  text-align: left;\n  padding: 2px 222px 2px 18px;\n} </style> <style> .swagger-editor .swagger-ui table tbody tr td {\n  padding: 0;\n} </style>\n\nAPI для взаимодействия мобильного приложения с ИС Молочная кухня по протоколу HTTP RestAPI. <br> Описание API предоставляется в формате [Swagger](https://swagger.io/) (Open API) и может быть использовано для импорта в другие инструменты (такие как PostMan) или генерации клиентского кода на различных языках программирования с помощью [Swagger CodeGen](https://swagger.io/tools/swagger-codegen/)\n<ul> <li> Описание в оригинальном swagger-формате <a href=\"/swagger\">swagger</a> <li> OpenAPI-файл <a href=\"/swagger.yaml\">swagger.yaml</a> </ul>\n\n<br> Для ручной проверки API вы можете использовать: <ul> <li> Под ОС Windows - [PostMan](https://www.postman.com/) <li> Под ОС Linux - [curl](https://curl.se/)  </ul>\n\n## Поддержка\nПри создании нового обращения в техподдержку используйте категорию API. <br> <br>\n\n## Авторизация\nАвторизация осуществляется по токену API, который генерируется по логину и паролю личного кабинета. <br> Токен следует добавлять в каждый запрос, прибавляя к запросу заголовок (http-header) формата `Authorization: Bearer .........`. <br> <br>\n## Форматы\n### Дата и время\nДата и время передаются в формате YYYY-MM-DD hh:mm:ss без спецификации часового пояса. <br> Примеры: <ul> <li> `2023-05-22` <li> `2023-05-22 00:00:00` <li> `2023-05-22 11:50:43`</ul>\n### Сумма и стоимость\nСумма и стоимость передаются в копейках. <br> Примеры: <ul> <li> `1000` <li> `4550` <li> `10000`</ul>\n## Обновления\n#### 2020.09.01 v1.0.0\n#### 2023.05.23 v1.1.0\n"
+  },
+  "servers": [
+    {
+      "url": "https://api-test.milkrb.ru",
+      "description": "Test server"
+    },
+    {
+      "url": "https://api.milkrb.ru",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Авторизация"
+        ],
+        "summary": "Запрос токена авторизации",
+        "operationId": "getAuthToken",
+        "description": "Запрос токена авторизации",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "query",
+            "description": "Логин пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "Пароль пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Метод позволяет получить токен авторизации (`access_token`), ID (`id`), логин (`username`) и ФИО (`fio`) пользователя (`user_id`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "ID пользователя",
+                      "example": 23850
+                    },
+                    "username": {
+                      "type": "string",
+                      "description": "Логин пользователя",
+                      "example": "ivanov"
+                    },
+                    "fio": {
+                      "type": "string",
+                      "description": "ФИО пользователя",
+                      "example": "Иванов Иван"
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "Токен авторизации",
+                      "example": "2pfP91dkfR-A-Pm4OadsevvO74UR33Yn"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не передан логин и / или пароль, неверный логин и / или пароль.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Логин»."
+                      ]
+                    },
+                    "password": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Пароль»."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "tags": [
+          "Регистрация"
+        ],
+        "summary": "Регистрация",
+        "operationId": "postSignup",
+        "description": "Регистрация пользователя.",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "query",
+            "description": "Логин пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxItems": 255
+            }
+          },
+          {
+            "name": "fio",
+            "in": "query",
+            "description": "ФИО пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxItems": 255
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Телефон пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "maxItems": 255
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "E-mail пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "maxItems": 255,
+              "format": "email"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "Пароль пользователя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "minLength": 6
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "В случае успешной регистрации, на e-mail отправляется ссылка для активации аккаунта. Возвращается ID (`id`), логин (`username`) и ФИО (`fio`) пользователя (`user_id`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "ID пользователя",
+                      "example": 23899
+                    },
+                    "username": {
+                      "type": "string",
+                      "description": "Логин пользователя",
+                      "example": "ivanov"
+                    },
+                    "fio": {
+                      "type": "string",
+                      "description": "ФИО пользователя",
+                      "example": "Иванов Иван"
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "Токен авторизации",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не переданы или переданы некорректные обязательные параметры.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Логин»."
+                      ]
+                    },
+                    "fio": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «ФИО»."
+                      ]
+                    },
+                    "phone": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Телефон»."
+                      ]
+                    },
+                    "email": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Email»."
+                      ]
+                    },
+                    "password": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Необходимо заполнить «Пароль»."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "tags": [
+          "Сброс пароля"
+        ],
+        "summary": "Сброс пароля",
+        "operationId": "resetPassword",
+        "description": "Сброс пароля через мобильное приложение.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "E-mail учетной записи",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "В случае успешной проверки, возвращается e-mail учетной записи (`email`) и на этот e-mail отправляется ссылка для смены пароля.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не передан e-mail, пользователь с таким e-mail не найден.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Пользователь не найден"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/callback": {
+      "post": {
+        "tags": [
+          "Форма обратной связи"
+        ],
+        "summary": "Форма обратной связи",
+        "operationId": "getCallback",
+        "description": "Метод позволяет отправить сообщение из формы обратной связи.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Имя",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "contact",
+            "in": "query",
+            "description": "Контактные данные",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "body",
+            "in": "query",
+            "description": "Сообщение",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение успешно отправлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не переданы обязательные параметры.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "array",
+                      "example": [
+                        "Необходимо заполнить «Имя»."
+                      ]
+                    },
+                    "contact": {
+                      "type": "array",
+                      "example": [
+                        "Необходимо заполнить «Контактные данные»."
+                      ]
+                    },
+                    "body": {
+                      "type": "array",
+                      "example": [
+                        "Необходимо заполнить «Сообщение»."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parents-application": {
+      "post": {
+        "tags": [
+          "Заявка на получение продукции"
+        ],
+        "summary": "Заявка на получение продукции",
+        "operationId": "getCallback",
+        "description": "Метод позволяет отправить заявку на получение продукции.",
+        "parameters": [
+          {
+            "name": "fio",
+            "in": "query",
+            "description": "ФИО",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Телефон",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "description": "Файлы",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Заявление успешно отправлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не переданы обязательные параметры.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "fio": {
+                      "type": "array",
+                      "example": [
+                        "Необходимо заполнить «ФИО»."
+                      ]
+                    },
+                    "phone": {
+                      "type": "array",
+                      "example": [
+                        "Необходимо заполнить «Телефон»."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "Список товаров"
+        ],
+        "summary": "Список товаров",
+        "operationId": "getProductsList",
+        "description": "Метод позволяет получить список товаров.",
+        "responses": {
+          "200": {
+            "description": "Список товаров",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductsItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/news": {
+      "get": {
+        "tags": [
+          "Список новостей"
+        ],
+        "summary": "Список новостей",
+        "operationId": "getProductsList",
+        "description": "Метод позволяет получить список новостей.",
+        "responses": {
+          "200": {
+            "description": "Список новостей",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gallery": {
+      "get": {
+        "tags": [
+          "Галерея"
+        ],
+        "summary": "Галерея",
+        "operationId": "getImagesList",
+        "description": "Метод позволяет получить галерею.",
+        "responses": {
+          "200": {
+            "description": "Галерея",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImagesItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq": {
+      "get": {
+        "tags": [
+          "Часто задаваемые вопросы"
+        ],
+        "summary": "Часто задаваемые вопросы",
+        "operationId": "getFaqList",
+        "description": "Метод позволяет получить список часто задаваемых вопросов.",
+        "responses": {
+          "200": {
+            "description": "Список часто задаваемых вопросов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FagItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rewards": {
+      "get": {
+        "tags": [
+          "Список наград"
+        ],
+        "summary": "Список наград",
+        "operationId": "getRewardsList",
+        "description": "Метод позволяет получить список наград.",
+        "responses": {
+          "200": {
+            "description": "Список наград",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RewardsItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff": {
+      "get": {
+        "tags": [
+          "Список сотрудников"
+        ],
+        "summary": "Список сотрудников",
+        "operationId": "getStaffList",
+        "description": "Метод позволяет получить список сотрудников.",
+        "responses": {
+          "200": {
+            "description": "Список сотрудников",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StaffItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts": {
+      "get": {
+        "tags": [
+          "Список адресов"
+        ],
+        "summary": "Список адресов",
+        "operationId": "getContactsList",
+        "description": "Метод позволяет получить список адресов.",
+        "responses": {
+          "200": {
+            "description": "Список адресов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContactsItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/orders": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Заказы"
+        ],
+        "summary": "Список заказов",
+        "operationId": "getOrders",
+        "description": "Метод позволяет получить список заказов.",
+        "responses": {
+          "200": {
+            "description": "Список заказов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrdersItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/recipients": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Список получателей продукции",
+        "operationId": "getRecipients",
+        "description": "Метод позволяет получить список получателей продукции.",
+        "responses": {
+          "200": {
+            "description": "Список получателей продукции. Если у пользователя получателей, возвращается пустой массив [].",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipientsItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/recipients/{recipientId}": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Информация по получателю продукции",
+        "operationId": "getRecipientById",
+        "description": "Метод позволяет получить информация о получателе по идентификатору ID. Если получателя нет или получатель принадлежит другому пользователю, возвращается `null`. Значения (`point`) и (`locality`) могут быть пустой строкой.",
+        "parameters": [
+          {
+            "name": "recipientId",
+            "in": "path",
+            "description": "Идентификатор получателя ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация по получателю продукции",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipient"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/references/{recipientId}": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Справки получателя продукции",
+        "operationId": "getReferencesById",
+        "description": "Метод позволяет получить информация о справках получателя по идентификатору ID. Если получателя нет или получатель принадлежит другому пользователю, возвращается `false`.",
+        "parameters": [
+          {
+            "name": "recipientId",
+            "in": "path",
+            "description": "Идентификатор получателя ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о справках получателя продукции",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reference"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/appointments/{recipientId}": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Назначения получателя продукции",
+        "operationId": "getAppointmentsById",
+        "description": "Метод позволяет получить информация о назначениях на текущий месяц для получателя по идентификатору ID. Если получателя нет или получатель принадлежит другому пользователю, возвращается `null`. Если нет назначений, возвращается `null`. Если нет какого-то типа назначения, возвращается пустой массив `milk_products` => []",
+        "parameters": [
+          {
+            "name": "recipientId",
+            "in": "path",
+            "description": "Идентификатор получателя ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о назначениях для получателя продукции",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/products/{recipientId}": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Полученная продукция",
+        "operationId": "getProductsById",
+        "description": "Метод позволяет получить информацию о полученной продукции для получателя по идентификатору ID. Если получателя нет или получатель принадлежит другому пользователю, возвращается `null`. Если нет полученной продукции, возвращается `null`.",
+        "parameters": [
+          {
+            "name": "recipientId",
+            "in": "path",
+            "description": "Идентификатор получателя ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о полученной продукции",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/recipient-add": {
+      "post": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Добавить получателя продукции",
+        "operationId": "getRecipientAdd",
+        "description": "Метод позволяет добавить получателя продукции. Возвращается ID (`id`), лицевой счет (`ls`), ФИО (`fio`), раздаточный пункт (`point`) и населенный пункт (`locality`) получателя.",
+        "parameters": [
+          {
+            "name": "l_name",
+            "in": "query",
+            "description": "Фамилия получателя",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ls",
+            "in": "query",
+            "description": "Лицевой счет получателя",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "born_at",
+            "in": "query",
+            "description": "День рождения получателя",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о полученной продукции",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipient"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Не переданы обязательные параметры или переданы некорректные параметры.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "l_name": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "Фамилия не соответствует указанному номеру лицевого счета"
+                      ]
+                    },
+                    "born_at": {
+                      "type": "array",
+                      "description": "Текст ошибки",
+                      "example": [
+                        "День рождения не соответствует указанному номеру лицевого счета"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/recipient-remove": {
+      "delete": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Получатели продукции"
+        ],
+        "summary": "Удалить получателя продукции",
+        "operationId": "deleteRecipientById",
+        "description": "Метод позволяет удалить получателя продукции.",
+        "parameters": [
+          {
+            "name": "recipientId",
+            "in": "path",
+            "description": "Идентификатор получателя ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Если получателя нет или получатель принадлежит другому пользователю, возвращается `null`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/addresses": {
+      "get": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Заказы"
+        ],
+        "summary": "Список адресов выдачи",
+        "operationId": "getOrders",
+        "description": "Метод позволяет получить список адресов выдачи заказов.",
+        "responses": {
+          "200": {
+            "description": "Список адресов выдачи",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressesItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/register": {
+      "post": {
+        "security": [
+          {
+            "HeaderApiKey": []
+          }
+        ],
+        "tags": [
+          "Заказы"
+        ],
+        "summary": "Оформить заказ",
+        "operationId": "getOrderRegister",
+        "description": "Метод позволяет оформить заказ. Метод принимает ID точки выдачи заказов и объект basket, ключом в котором выступают ID товаров, значением - их количество.",
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "query",
+            "description": "ID точки выдачи",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "basket",
+            "in": "query",
+            "description": "Корзина",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "10": {
+                  "type": "integer",
+                  "description": "Количество товара",
+                  "example": 1
+                },
+                "11": {
+                  "type": "integer",
+                  "description": "Количество товара",
+                  "example": 2
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "В случае успешного оформления, возвращается url для оплаты.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Successful response",
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://bankwallet.ru/payment/merchants/rbs/payment_ru.html?mdOrder=f21a8d01-890b-744b-b886-9ebe032af2f1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Error response",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Тип ошибки",
+                      "example": "Bad Request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Сообщение ошибки",
+                      "example": "Некорректный запрос"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "Код ошибки",
+                      "example": 0
+                    },
+                    "status": {
+                      "type": "integer",
+                      "description": "Код ответа",
+                      "example": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseBodyError401"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "HeaderApiKey": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "responseBodyError400": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "Флаг статуса ответа.",
+            "type": "string",
+            "example": "error"
+          },
+          "errors": {
+            "description": "Описание ошибки.",
+            "type": "object",
+            "properties": {
+              "0": {
+                "description": "Текст ошибки.",
+                "type": "string",
+                "example": "error_text"
+              }
+            }
+          }
+        }
+      },
+      "responseBodyError401": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Тип ошибки",
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "message": {
+            "description": "Описание ошибки",
+            "type": "string",
+            "example": "Your request was made with invalid credentials."
+          },
+          "code": {
+            "description": "Код ошибки",
+            "type": "integer",
+            "example": 0
+          },
+          "status": {
+            "description": "Код ответа",
+            "type": "integer",
+            "example": 401
+          }
+        }
+      },
+      "ProductsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор товара",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Название товара",
+            "example": "ТВОРОГ  100г."
+          },
+          "description": {
+            "type": "string",
+            "description": "Короткое описание товара",
+            "example": "детский с массовой долей жира 10%, фас.стакан"
+          },
+          "image": {
+            "type": "string",
+            "description": "Изображение товара",
+            "example": "5.png"
+          },
+          "long_desc": {
+            "type": "string",
+            "description": "Длинное описание товара",
+            "example": "Продукт предназначен для непосредственного употребления в питании детей раннего возраста старше 6-ти месяцев. Перед употреблением массу продукта подогреть до комнатной температуры. Может использоваться в питании детей старше трех лет, а также взрослого населения."
+          },
+          "for_buy": {
+            "type": "integer",
+            "description": "Товар для продажи",
+            "example": 1
+          },
+          "price": {
+            "type": "integer",
+            "description": "Цена товара",
+            "example": 4500
+          }
+        }
+      },
+      "NewsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор новости",
+            "example": 65
+          },
+          "title": {
+            "type": "string",
+            "description": "Название новости",
+            "example": "Уважаемые жители города СИБАЙ"
+          },
+          "text": {
+            "type": "string",
+            "description": "Описание новости",
+            "example": "<p>С радостью сообщаем вам, что сегодня, 21 января 2020 г. состоялось открытие раздаточного пункта в Вашем городе по АДРЕСУ: <strong>г. СИБАЙ, ул. Маяковского, д. 26</strong><br />\r\n<br />\r\nГРАФИК РАБОТЫ:</p>\r\n\r\n"
+          },
+          "date": {
+            "type": "string",
+            "description": "Дата новости",
+            "example": "2020-01-21T00:00:00.000Z"
+          },
+          "image": {
+            "type": "string",
+            "description": "Изображение новости",
+            "example": "88888-2-1000x1000-77453160753.jpg"
+          }
+        }
+      },
+      "ImagesItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор элемента",
+            "example": 4
+          },
+          "image": {
+            "type": "string",
+            "description": "Изображение",
+            "example": "https://milkrb.ru/images/gallery/photo_2021-04-06_09-34-30-24026131765.jpg"
+          }
+        }
+      },
+      "FagItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор элемента",
+            "example": 1
+          },
+          "question": {
+            "type": "string",
+            "description": "Вопрос",
+            "example": "Не загружается приложение, что делать?"
+          },
+          "answer": {
+            "type": "string",
+            "description": "Ответ",
+            "example": "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum."
+          }
+        }
+      },
+      "RewardsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор элемента",
+            "example": 1
+          },
+          "image": {
+            "type": "string",
+            "description": "Изображение элемента",
+            "example": "https://milkrb.ru/images/rewards/грамота 10.jpg"
+          }
+        }
+      },
+      "StaffItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор сотрудника",
+            "example": 1
+          },
+          "position": {
+            "type": "string",
+            "description": "Должность сотрудника",
+            "example": "Директор"
+          },
+          "fio": {
+            "type": "string",
+            "description": "ФИО сотрудника",
+            "example": "Фаизов Азат Низаметдинович"
+          }
+        }
+      },
+      "ContactsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор адреса",
+            "example": 1
+          },
+          "phone": {
+            "type": "string",
+            "description": "Телефон",
+            "example": "+7 (347) 246-18-22"
+          },
+          "address": {
+            "type": "string",
+            "description": "Адрес",
+            "example": "г. Уфа, ул. Зорге, д. 9/3"
+          },
+          "title": {
+            "type": "string",
+            "description": "Название",
+            "example": "Центральный офис"
+          },
+          "lat": {
+            "type": "number",
+            "description": "Широта",
+            "example": 54.75023956991841
+          },
+          "lon": {
+            "type": "number",
+            "description": "Долгота",
+            "example": 55.98147249999999
+          }
+        }
+      },
+      "OrdersItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор заказа",
+            "example": 1930
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Сумма заказа",
+            "example": 18000
+          },
+          "datetime": {
+            "type": "string",
+            "description": "Дата заказа",
+            "example": "2023-05-22T11:50:43.000Z"
+          }
+        }
+      },
+      "AddressesItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор точки выдачи",
+            "example": 1346
+          },
+          "title": {
+            "type": "string",
+            "description": "Адрес точки выдачи",
+            "example": "c. Давлеканово, Советская, 33а"
+          },
+          "store": {
+            "type": "string",
+            "description": "Магазин",
+            "example": "Молочная кухня"
+          }
+        }
+      },
+      "RecipientsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор получателя",
+            "example": 185
+          },
+          "ls": {
+            "type": "integer",
+            "description": "Лицевой счет получателя",
+            "example": 10157599
+          },
+          "fio": {
+            "type": "string",
+            "description": "ФИО получателя",
+            "example": "Гайнуллин Самир Рустамович"
+          }
+        }
+      },
+      "Recipient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Идентификатор получателя",
+            "example": 185
+          },
+          "ls": {
+            "type": "integer",
+            "description": "Лицевой счет получателя",
+            "example": 10157599
+          },
+          "fio": {
+            "type": "string",
+            "description": "ФИО получателя",
+            "example": "Гайнуллин Самир Рустамович"
+          },
+          "point": {
+            "type": "string",
+            "description": "Раздаточный пункт",
+            "example": "Раздаточный пункт Уфа Рабкоров 20"
+          },
+          "locality": {
+            "type": "string",
+            "description": "Населенный пункт",
+            "example": "Уфа"
+          }
+        }
+      },
+      "Reference": {
+        "type": "object",
+        "properties": {
+          "Docum": {
+            "type": "string",
+            "description": "Название справки",
+            "example": "Справка о малоимущем"
+          },
+          "DataEnd": {
+            "type": "string",
+            "description": "Дата окончания действия справки",
+            "example": "2023-09-30T00:00:00.000Z"
+          }
+        }
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "dry_mixes": {
+            "type": "object",
+            "description": "Сухие смеси",
+            "properties": {
+              "Mon May 01 2023 05:00:00 GMT+0500 (Екатеринбург, стандартное время)": {
+                "type": "array",
+                "description": "Назначение на конкретную дату",
+                "items": {
+                  "$ref": "#/components/schemas/AppointmentItemToDate"
+                }
+              }
+            }
+          },
+          "milk_products": {
+            "type": "object",
+            "description": "Молочная продукция",
+            "properties": {
+              "Mon May 01 2023 05:00:00 GMT+0500 (Екатеринбург, стандартное время)": {
+                "type": "array",
+                "description": "Назначение на конкретную дату",
+                "items": {
+                  "$ref": "#/components/schemas/AppointmentItemToDate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "Wed May 03 2023 05:00:00 GMT+0500 (Екатеринбург, стандартное время)": {
+            "type": "array",
+            "description": "Получено продукции на конкретную дату",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentItemToDate"
+            }
+          }
+        }
+      },
+      "AppointmentItemToDate": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "description": "Название продукции",
+            "example": "Сухая адаптированная молочная смесь (с 8-12мес) 800 гр*"
+          },
+          "Count": {
+            "type": "string",
+            "description": "Количество",
+            "example": 2
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Регистрация"
+    },
+    {
+      "name": "Авторизация"
+    },
+    {
+      "name": "Сброс пароля"
+    },
+    {
+      "name": "Форма обратной связи"
+    },
+    {
+      "name": "Заявка на получение продукции"
+    },
+    {
+      "name": "Список товаров"
+    },
+    {
+      "name": "Список новостей"
+    },
+    {
+      "name": "Галерея"
+    },
+    {
+      "name": "Часто задаваемые вопросы"
+    },
+    {
+      "name": "Список наград"
+    },
+    {
+      "name": "Список сотрудников"
+    },
+    {
+      "name": "Список адресов"
+    },
+    {
+      "name": "Заказы"
+    },
+    {
+      "name": "Получатели продукции"
+    }
+  ]
+}
